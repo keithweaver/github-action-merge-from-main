@@ -14,6 +14,7 @@ Automates running commands on `main`, committing results, opening a PR, waiting 
 - `github_access_token` (required): token with push and PR/merge rights.
 - `commands` (required): newline-separated commands (e.g. `go run ./...`).
 - `commit_prefix` (optional): commit/PR prefix, defaults to `[Auto Merge]`.
+- `go_version` (optional): Go version for `actions/setup-go`, defaults to `1.21`.
 
 ### Environment
 - `PREFIXES_TO_IGNORE`: optional comma-delimited prefixes to skip reruns. Empty string is ignored.
@@ -37,6 +38,7 @@ jobs:
           commands: |
             go run ./
           commit_prefix: "[Auto Merge]"
+          go_version: "1.23"
         env:
           PREFIXES_TO_IGNORE: "[Skip Me],[Do Not Run]"
 ```

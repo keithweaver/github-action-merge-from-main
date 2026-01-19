@@ -12,6 +12,10 @@ inputs:
     description: "Prefix to use for commits/PRs. Defaults to [Auto Merge]."
     required: false
     default: "[Auto Merge]"
+  go_version:
+    description: "Go version used by actions/setup-go."
+    required: false
+    default: "1.23"
   commands:
     description: "Newline-separated commands to run before creating the PR (e.g. go run ./...)."
     required: true
@@ -23,7 +27,7 @@ runs:
     - name: Setup Go
       uses: actions/setup-go@v5
       with:
-        go-version: "1.21"
+        go-version: ${{ inputs.go_version }}
     - name: Merge from Main
       shell: bash
       env:
