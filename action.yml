@@ -1,6 +1,9 @@
 name: Merge from Main
 author: "keithweaver"
 description: "Run commands on main, open a PR with changes, and auto-merge when CI passes."
+branding:
+  icon: git-merge
+  color: purple
 inputs:
   github_access_token:
     description: "GitHub token with permission to push and merge."
