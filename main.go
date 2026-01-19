@@ -18,6 +18,8 @@ type config struct {
 	RepoName       string
 	BaseBranch     string
 	IgnorePrefixes []string
+	RunOnPrefixes  []string
+	RunOnContains  []string
 	WaitSeconds    int
 	CIWaitTimeout  time.Duration
 	CIWaitInterval time.Duration
@@ -90,7 +92,30 @@ func ConfirmShouldRun(cfg config) (bool, error) {
 		}
 	}
 
-	return true, nil
+	// Run-on filters: if provided, they must match.
+	prefixMatch := len(cfg.RunOnPrefixes) == 0
+	for _, prefix := range cfg.RunOnPrefixes {
+		if prefix == "" {
+			continue
+		}
+		if strings.HasPrefix(msg, prefix) {
+			prefixMatch = true
+			break
+		}
+	}
+
+	containsMatch := len(cfg.RunOnContains) == 0
+	for _, marker := range cfg.RunOnContains {
+		if marker == "" {
+			continue
+		}
+		if strings.Contains(msg, marker) {
+			containsMatch = true
+			break
+		}
+	}
+
+	return prefixMatch && containsMatch, nil
 }
 
 // RunCommands executes the provided commands sequentially.
@@ -245,6 +270,9 @@ func loadConfig() (config, error) {
 	extraPrefixes := parsePrefixes(os.Getenv("PREFIXES_TO_IGNORE"))
 	prefixes = append(prefixes, extraPrefixes...)
 
+	runPrefixes := parsePrefixes(os.Getenv("PREFIXES_TO_RUN_ON"))
+	runContains := parsePrefixes(os.Getenv("CONTAINS_TO_RUN_ON"))
+
 	return config{
 		AccessToken:    token,
 		CommitPrefix:   commitPrefix,
@@ -253,6 +281,8 @@ func loadConfig() (config, error) {
 		RepoName:       parts[1],
 		BaseBranch:     baseBranch,
 		IgnorePrefixes: prefixes,
+		RunOnPrefixes:  runPrefixes,
+		RunOnContains:  runContains,
 		WaitSeconds:    30,
 		CIWaitTimeout:  15 * time.Minute,
 		CIWaitInterval: 10 * time.Second,

@@ -17,6 +17,8 @@ Automates running commands on `main`, committing results, opening a PR, waiting 
 
 ### Environment
 - `PREFIXES_TO_IGNORE`: optional comma-delimited prefixes to skip reruns. Empty string is ignored.
+- `PREFIXES_TO_RUN_ON`: optional comma-delimited prefixes; if set, action only runs when the last commit starts with one of these.
+- `CONTAINS_TO_RUN_ON`: optional comma-delimited substrings; if set, action only runs when the last commit contains one of these.
 
 ### Usage
 ```yaml
