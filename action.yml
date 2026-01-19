@@ -1,0 +1,31 @@
+name: Merge from Main
+author: "keithweaver"
+description: "Run commands on main, open a PR with changes, and auto-merge when CI passes."
+inputs:
+  github_access_token:
+    description: "GitHub token with permission to push and merge."
+    required: true
+  commit_prefix:
+    description: "Prefix to use for commits/PRs. Defaults to [Auto Merge]."
+    required: false
+    default: "[Auto Merge]"
+  commands:
+    description: "Newline-separated commands to run before creating the PR (e.g. go run ./...)."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "1.21"
+    - name: Merge from Main
+      shell: bash
+      env:
+        INPUT_GITHUB_ACCESS_TOKEN: ${{ inputs.github_access_token }}
+        INPUT_COMMIT_PREFIX: ${{ inputs.commit_prefix }}
+        INPUT_COMMANDS: ${{ inputs.commands }}
+        PREFIXES_TO_IGNORE: ${{ env.PREFIXES_TO_IGNORE }}
+      run: go run ./...
